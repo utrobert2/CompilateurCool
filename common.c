@@ -8,6 +8,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <getopt.h>
+#include<ctype.h>
 
 #include "defs.h"
 #include "common.h"
@@ -22,22 +23,168 @@ extern bool stop_after_verif;
 
 
 void parse_args(int argc, char ** argv) {
+    // Déclaration des variables activ_i (= 0 neutre, =1 activation de l'option, =-1 présence d'erreur)
+    int activ_b = 0;
+    int activ_t = 0;
+    int inter_t;
+    int activ_r = 0;
+    int inter_r;
+    int activ_s = 0;
+    int activ_v = 0;
+    int activ_h = 0;
+    int activ_infile = 0;
+    int activ_outfile = 0;
+    char * interinfile = NULL;
+    char * interoutfile = NULL;
 
-    
-    // FAIRE LA RECONNAISSANCE DES ARGUMENTS DANS LA FONCTION (if strcmp(argv[i],"-s")==0 do...)
-    // A implementer (la ligne suivante est a changer)
-    infile = argv[1];
+    int k = 0;
+
+    // On parcoure les arguments 
     for (int i = 0;i < argc;i++){
-        if (strcmp(argv[i],"-b") == 0){
-            if (argc > 2){
-                printf("ERREUR : Arguments incompatibles les uns envers les autres\n");
-                exit(1);
+        // Option -h
+        if ((strcmp(argv[i],"-h") == 0) || (argc == 1)){
+            // On l'active
+            activ_h = 1;
+            // Si il y'a eu une erreur précédemment enregistrée, cette option ne sera pas activée donc neutre
+            if ((activ_b == -1) || (activ_infile == -1) || (activ_outfile == -1) || (activ_r == -1) || (activ_s == -1) || (activ_t == -1) || (activ_v == -1)) activ_h = 0;
+            // L'option arrête le parsing des arguments donc on quitte cette boucle for
+            break;
+        }
+
+        // Option -h
+        else if (strcmp(argv[i],"-b") == 0){
+            // Si il y'a d'autres options/arguments on ne peut l'activer donc erreur
+            if (argc > 2) activ_b = -1;
+            // Sinon on l'active
+            if (activ_b == 0) activ_b = 1;
+        }
+
+        // Option -s
+        else if (strcmp(argv[i],"-s") == 0){
+            // On vérifie la non présence de l'option -v (incompatible avec l'option -s)
+            for (k = 0;k < argc;k++){
+                // Si il y a présence de -v, erreur
+                if (strcmp(argv[k],"-v") == 0){
+                    activ_s = -1;
+                }
             }
-            printf("**************************** COMPILOTRON ****************************\n");
-            printf("********************** BOUCHARD Paul - UT Robert ********************\n");
-            exit(0);
+            // Sinon activation
+            if (activ_s != -1) activ_s = 1;
+        }
+
+        // Option -v (même fonctionnement que -s)
+        else if (strcmp(argv[i],"-v") == 0){
+            for (k = 0;k < argc;k++){
+                if (strcmp(argv[k],"-s") == 0){
+                    activ_v = -1;
+                }
+            }
+            if (activ_v != -1) activ_v = 1;
+        }
+
+        // Option -t
+        else if (strcmp(argv[i],"-t") == 0){
+            // Si il n'y a pas d'arguments après l'option, il y a erreur (cette option se déclare comme suit : -t <int>)
+            if (i+1 == argc) activ_t = -1;
+            // Seconde vérification de présence d'erreurs : si le <int> n'en est pas un ou si il se situe en dehors de l'intervalle requis
+            else{
+                char c = argv[i+1][strlen(argv[i+1])-1];
+                if ((isalpha(c)) || (atoi(argv[i+1])) < 0 || (atoi(argv[i+1]) > 5)) activ_t = -1;
+            }
+            // Activation et collecte dans inter_t du <int>
+            if (activ_t == 0){
+                activ_t = 1;
+                inter_t = atoi(argv[i+1]);
+            }
+        }
+
+        // Option -r (même fonctionnement que -t)
+        else if (strcmp(argv[i],"-r") == 0){
+            if (i+1 == argc){ 
+                activ_r = -1;
+            }
+            else{
+                char c = argv[i+1][strlen(argv[i+1])-1];
+                if ((isalpha(c)) || (atoi(argv[i+1]) < 4) || (atoi(argv[i+1]) > 8)) activ_r = -1;
+            }
+            if (activ_r == 0){
+                activ_r = 1;
+                inter_r = atoi(argv[i+1]);
+            }
+        }
+
+        // Lors d'une rencontre d'un fichier .qqchose on vérifie son extension
+        else if (argv[i][strlen(argv[i])-2] == '.'){
+            // Fichier .c
+            if (argv[i][strlen(argv[i])-1] == 'c'){
+                // Si il y a déjà eu un fichier .c de rencontré précédemment c'est une erreur
+                if (activ_infile == 1) activ_infile = -1;
+                // Sinon activation et collecte du nom du fichier dans interinfile
+                else if (activ_infile == 0){
+                    activ_infile = 1;
+                    interinfile = argv[i];
+                }
+            }
+            // Fichier .s
+            else if (argv[i][strlen(argv[i])-1] == 's'){
+                // Vérification de si l'option -o a bien été spécifiée précédemment juste avant (pas de second fichier .s sinon erreur)
+                if ((argv[i-1][strlen(argv[i-1])-1] != 'o') || (argv[i-1][strlen(argv[i-1])-2] != '-')){
+                    activ_outfile = -1;
+                }
+            }
+        }
+
+        // Option -o
+        else if (strcmp(argv[i],"-o") == 0){
+            // On vérifie si il y'a bien un argument après l'option et si ce dernier est un fichier de type .s, si ce n'est pas le cas : erreur
+            if ((i+1 == argc) || (argv[i+1][strlen(argv[i+1])-1] != 's') || (argv[i+1][strlen(argv[i+1])-2] != '.')){
+                activ_outfile = -1;
+            }
+            // Sinon activation et collecte du nom du fichier dans interoutfile
+            if (activ_outfile == 0){
+                interoutfile = argv[i+1];
+                activ_outfile = 1;
+            }
         }
     }
+
+    // Si aucun fichier .c n'a été déclaré et que les options -h et -b n'ont pas été déclarées, c'est une erreur
+    if (interinfile == NULL && activ_b != 1 && activ_h != 1){
+        printf("ERREUR\n");
+        exit(1);
+    }
+
+    // On vérifie la présence d'erreurs parmi les variables d'activation
+    int tab_activ[8] = {activ_b,activ_h,activ_infile,activ_outfile,activ_r,activ_s,activ_t,activ_v};
+    for (int i = 0;i < 8;i++){
+        if (tab_activ[i] == -1){
+            printf("ERREUR\n");
+            exit(1);
+        }
+    }
+    // Option -b : affichage du nom du compilateur et des membres du binôme
+    if (activ_b == 1){
+        printf("**************************** COMPILOTRON ****************************\n");
+        printf("********************** BOUCHARD Paul - UT Robert ********************\n");
+    }
+    // Option -h : affichage de la liste des options
+    if (activ_h == 1){
+        printf("• -b : Affiche une bannière indiquant le nom du compilateur et des membres du binôme\n");
+        printf("• -o <filename> : Définit le nom du fichier assembleur produit (défaut : out.s)\n");
+        printf("• -t <int> : Définit le niveau de trace à utiliser entre 0 et 5 (0 = pas de trace ; 5 = toutes les traces. defaut = 0)\n");
+        printf("• -r <int> : Définit le nombre maximum de registres à utiliser, entre 4 et 8 (défaut : 8)\n");
+        printf("• -s : Arrêter la compilation après l'analyse syntaxique (défaut = non).\n");
+        printf("• -v : Arrêter la compilation après la passe de vérifications (défaut = non)\n");
+        printf("• -h : Afficher la liste des options (fonction d'usage) et arrêter le parsing des ar\n");
+    }
+    if (activ_infile == 1) infile = interinfile;
+    if (activ_outfile == 1) outfile = interoutfile;
+    if (activ_r == 1) 
+    if (activ_s == 1) stop_after_syntax = true;
+    if (activ_t == 1) trace_level = inter_t;
+    if (activ_v == 1) stop_after_verif = true;
+
+    exit(0);
 }
 
 
