@@ -20,7 +20,7 @@ extern char * outfile;
 int32_t trace_level = DEFAULT_TRACE_LEVEL;
 extern bool stop_after_syntax;
 extern bool stop_after_verif;
-
+extern int32_t max_regs;
 
 void parse_args(int argc, char ** argv) {
     // Déclaration des variables activ_i (= 0 neutre, =1 activation de l'option, =-1 présence d'erreur)
@@ -179,7 +179,7 @@ void parse_args(int argc, char ** argv) {
     }
     if (activ_infile == 1) infile = interinfile;
     if (activ_outfile == 1) outfile = interoutfile;
-    if (activ_r == 1) 
+    if (activ_r == 1) max_regs = inter_r;
     if (activ_s == 1) stop_after_syntax = true;
     if (activ_t == 1) trace_level = inter_t;
     if (activ_v == 1) stop_after_verif = true;
