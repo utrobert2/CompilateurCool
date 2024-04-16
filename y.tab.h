@@ -1,8 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.5.1.  */
+/* A Bison parser, made by GNU Bison 3.8.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2020 Free Software Foundation,
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2021 Free Software Foundation,
    Inc.
 
    This program is free software: you can redistribute it and/or modify
@@ -16,7 +16,7 @@
    GNU General Public License for more details.
 
    You should have received a copy of the GNU General Public License
-   along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
+   along with this program.  If not, see <https://www.gnu.org/licenses/>.  */
 
 /* As a special exception, you may create a larger work that contains
    part or all of the Bison parser skeleton and distribute that work
@@ -31,8 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
+/* DO NOT RELY ON FEATURES THAT ARE NOT DOCUMENTED in the manual,
+   especially those whose name start with YY_ or yy_.  They are
+   private implementation details that can be changed or removed.  */
 
 #ifndef YY_YY_Y_TAB_H_INCLUDED
 # define YY_YY_Y_TAB_H_INCLUDED
@@ -44,58 +45,67 @@
 extern int yydebug;
 #endif
 
-/* Token type.  */
+/* Token kinds.  */
 #ifndef YYTOKENTYPE
 # define YYTOKENTYPE
   enum yytokentype
   {
-    TOK_VOID = 258,
-    TOK_INT = 259,
-    TOK_BOOL = 260,
-    TOK_TRUE = 261,
-    TOK_FALSE = 262,
-    TOK_IF = 263,
-    TOK_DO = 264,
-    TOK_WHILE = 265,
-    TOK_FOR = 266,
-    TOK_PRINT = 267,
-    TOK_SEMICOL = 268,
-    TOK_COMMA = 269,
-    TOK_LPAR = 270,
-    TOK_RPAR = 271,
-    TOK_LACC = 272,
-    TOK_RACC = 273,
-    TOK_THEN = 274,
-    TOK_ELSE = 275,
-    TOK_AFFECT = 276,
-    TOK_OR = 277,
-    TOK_AND = 278,
-    TOK_BOR = 279,
-    TOK_BXOR = 280,
-    TOK_BAND = 281,
-    TOK_EQ = 282,
-    TOK_NE = 283,
-    TOK_GT = 284,
-    TOK_LT = 285,
-    TOK_GE = 286,
-    TOK_LE = 287,
-    TOK_SRL = 288,
-    TOK_SRA = 289,
-    TOK_SLL = 290,
-    TOK_PLUS = 291,
-    TOK_MINUS = 292,
-    TOK_MUL = 293,
-    TOK_DIV = 294,
-    TOK_MOD = 295,
-    TOK_UMINUS = 296,
-    TOK_NOT = 297,
-    TOK_BNOT = 298,
-    TOK_INTVAL = 299,
-    TOK_IDENT = 300,
-    TOK_STRING = 301
+    YYEMPTY = -2,
+    YYEOF = 0,                     /* "end of file"  */
+    YYerror = 256,                 /* error  */
+    YYUNDEF = 257,                 /* "invalid token"  */
+    TOK_VOID = 258,                /* TOK_VOID  */
+    TOK_INT = 259,                 /* TOK_INT  */
+    TOK_BOOL = 260,                /* TOK_BOOL  */
+    TOK_TRUE = 261,                /* TOK_TRUE  */
+    TOK_FALSE = 262,               /* TOK_FALSE  */
+    TOK_IF = 263,                  /* TOK_IF  */
+    TOK_DO = 264,                  /* TOK_DO  */
+    TOK_WHILE = 265,               /* TOK_WHILE  */
+    TOK_FOR = 266,                 /* TOK_FOR  */
+    TOK_PRINT = 267,               /* TOK_PRINT  */
+    TOK_SEMICOL = 268,             /* TOK_SEMICOL  */
+    TOK_COMMA = 269,               /* TOK_COMMA  */
+    TOK_LPAR = 270,                /* TOK_LPAR  */
+    TOK_RPAR = 271,                /* TOK_RPAR  */
+    TOK_LACC = 272,                /* TOK_LACC  */
+    TOK_RACC = 273,                /* TOK_RACC  */
+    TOK_THEN = 274,                /* TOK_THEN  */
+    TOK_ELSE = 275,                /* TOK_ELSE  */
+    TOK_AFFECT = 276,              /* TOK_AFFECT  */
+    TOK_OR = 277,                  /* TOK_OR  */
+    TOK_AND = 278,                 /* TOK_AND  */
+    TOK_BOR = 279,                 /* TOK_BOR  */
+    TOK_BXOR = 280,                /* TOK_BXOR  */
+    TOK_BAND = 281,                /* TOK_BAND  */
+    TOK_EQ = 282,                  /* TOK_EQ  */
+    TOK_NE = 283,                  /* TOK_NE  */
+    TOK_GT = 284,                  /* TOK_GT  */
+    TOK_LT = 285,                  /* TOK_LT  */
+    TOK_GE = 286,                  /* TOK_GE  */
+    TOK_LE = 287,                  /* TOK_LE  */
+    TOK_SRL = 288,                 /* TOK_SRL  */
+    TOK_SRA = 289,                 /* TOK_SRA  */
+    TOK_SLL = 290,                 /* TOK_SLL  */
+    TOK_PLUS = 291,                /* TOK_PLUS  */
+    TOK_MINUS = 292,               /* TOK_MINUS  */
+    TOK_MUL = 293,                 /* TOK_MUL  */
+    TOK_DIV = 294,                 /* TOK_DIV  */
+    TOK_MOD = 295,                 /* TOK_MOD  */
+    TOK_UMINUS = 296,              /* TOK_UMINUS  */
+    TOK_NOT = 297,                 /* TOK_NOT  */
+    TOK_BNOT = 298,                /* TOK_BNOT  */
+    TOK_INTVAL = 299,              /* TOK_INTVAL  */
+    TOK_IDENT = 300,               /* TOK_IDENT  */
+    TOK_STRING = 301               /* TOK_STRING  */
   };
+  typedef enum yytokentype yytoken_kind_t;
 #endif
-/* Tokens.  */
+/* Token kinds.  */
+#define YYEMPTY -2
+#define YYEOF 0
+#define YYerror 256
+#define YYUNDEF 257
 #define TOK_VOID 258
 #define TOK_INT 259
 #define TOK_BOOL 260
@@ -151,7 +161,7 @@ union YYSTYPE
     char * strval;
     node_t ptr;
 
-#line 155 "y.tab.h"
+#line 165 "y.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -162,6 +172,8 @@ typedef union YYSTYPE YYSTYPE;
 
 extern YYSTYPE yylval;
 
+
 int yyparse (node_t * program_root);
+
 
 #endif /* !YY_YY_Y_TAB_H_INCLUDED  */
