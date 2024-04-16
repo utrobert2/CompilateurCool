@@ -2,8 +2,8 @@
 EXE=minicc
 UTILS=utils
 
-DEBUG_LEX=1
-DEBUG_YACC=0
+DEBUG_LEX=0
+DEBUG_YACC=1
 
 ifeq ($(DEBUG_LEX),1)
 	YACC_FLAGS=
@@ -65,4 +65,3 @@ clean:
 realclean: clean
 	@echo "| Cleaning lex and yacc files, and executable"
 	@rm -f y.tab.c y.tab.h lex.yy.c out.s $(EXE)
-

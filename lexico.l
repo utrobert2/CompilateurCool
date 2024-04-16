@@ -11,7 +11,6 @@
 
 int yyparse(node_t * program_root);
 void analyse_tree(node_t root);
-bool check_program_tree(node_t node);
 
 char * infile = NULL;
 char * outfile = DEFAULT_OUTFILE;
@@ -139,7 +138,6 @@ int main(int argc, char ** argv) {
     node_t program_root;
     parse_args(argc, argv);
     yyin = fopen(infile, "r");
-    check_program_tree(program_root);
     #if LEX_DEBUG
         while(yylex());
         fclose(yyin);

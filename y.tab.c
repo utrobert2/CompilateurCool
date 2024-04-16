@@ -2038,16 +2038,19 @@ node_t make_node_special(node_nature nature, int valeur, char * chaine){
 }
 
 node_t make_node(node_nature nature, int nops, ...) {
+    
     va_list ap;
     va_start(ap,nops);
-    node_t node = malloc(sizeof(node_s));
+    node_t node = (node_s*)malloc(sizeof(node_s));
+
     node->nature = nature;
     node->lineno = yylineno;
     node->nops = nops;
-    node->opr = (nops > 0) ? malloc(nops) : NULL;
+    node->opr = (nops > 0) ? (node_s**)malloc(sizeof(node_s) * nops) : NULL;
     for(int i = 0;i < nops;i++){
         node->opr[i] = va_arg( ap, node_t);
     }
+
     va_end(ap);
     return node;
 }

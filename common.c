@@ -175,7 +175,8 @@ void parse_args(int argc, char ** argv) {
         printf("• -r <int> : Définit le nombre maximum de registres à utiliser, entre 4 et 8 (défaut : 8)\n");
         printf("• -s : Arrêter la compilation après l'analyse syntaxique (défaut = non).\n");
         printf("• -v : Arrêter la compilation après la passe de vérifications (défaut = non)\n");
-        printf("• -h : Afficher la liste des options (fonction d'usage) et arrêter le parsing des ar\n");
+        printf("• -h : Afficher la liste des options (fonction d'usage) et arrêter le parsing des arguments\n");
+        exit(0);
     }
     if (activ_infile == 1) infile = interinfile;
     if (activ_outfile == 1) outfile = interoutfile;
@@ -183,8 +184,6 @@ void parse_args(int argc, char ** argv) {
     if (activ_s == 1) stop_after_syntax = true;
     if (activ_t == 1) trace_level = inter_t;
     if (activ_v == 1) stop_after_verif = true;
-
-    exit(0);
 }
 
 
