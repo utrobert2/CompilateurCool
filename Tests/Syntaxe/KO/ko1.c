@@ -1,3 +1,6 @@
-int a = 2;
-int b = false;
-int c = 3;
+// test void absent
+
+main() {
+    printf("Hello, world!\n");
+    return 0;
+}

@@ -36,6 +36,7 @@ void parse_args(int argc, char ** argv) {
     int activ_outfile = 0;
     char * interinfile = NULL;
     char * interoutfile = NULL;
+    FILE* file;
 
     int k = 0;
 
@@ -150,7 +151,7 @@ void parse_args(int argc, char ** argv) {
 
     // Si aucun fichier .c n'a été déclaré et que les options -h et -b n'ont pas été déclarées, c'est une erreur
     if (interinfile == NULL && activ_b != 1 && activ_h != 1){
-        printf("ERREUR\n");
+        printf("ERREUR : Déclarer un fichier\n");
         exit(1);
     }
 
@@ -178,8 +179,18 @@ void parse_args(int argc, char ** argv) {
         printf("• -h : Afficher la liste des options (fonction d'usage) et arrêter le parsing des arguments\n");
         exit(0);
     }
+
+
     if (activ_infile == 1) infile = interinfile;
     if (activ_outfile == 1) outfile = interoutfile;
+    // Verifier si le fichier d'entrée existe
+    file = fopen(infile,"r");
+    if (file == NULL){
+        printf("ERREUR : Fichier d'entrée inexistant\n");
+        exit(1);
+    }
+    fclose(file);
+    
     if (activ_r == 1) max_regs = inter_r;
     if (activ_s == 1) stop_after_syntax = true;
     if (activ_t == 1) trace_level = inter_t;
