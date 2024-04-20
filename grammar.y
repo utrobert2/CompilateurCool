@@ -76,11 +76,13 @@ node_t make_node_special(node_nature nature,int valeur, char * chaine);
 
 /* Completer les regles et la creation de l'arbre */
 program:
-        listdeclnonnull maindecl{
+        listdeclnonnull maindecl
+        {
             $$ = make_node(NODE_PROGRAM, 2, $1, $2);
             *program_root = $$;
         }
-        | maindecl{
+        | maindecl
+        {
             $$ = make_node(NODE_PROGRAM, 2, NULL, $1);
             *program_root = $$;
         }
@@ -101,11 +103,11 @@ listtypedecl : decl { $$ = $1; }
         | listtypedecl TOK_COMMA decl { $$ = make_node(NODE_LIST, 2, $1, $3); }
         ;
 
-decl    : ident { $$ = $1; }
+decl    : ident { $$ = make_node(NODE_DECL, 2, $1, NULL); }
         | ident TOK_AFFECT expr { $$ = make_node(NODE_DECL, 2, $1, $3);}
         ;
 
-maindecl : type ident TOK_LPAR TOK_RPAR block {$$ = make_node(NODE_FUNC, 3, $1, $2, $5);}
+maindecl: type ident TOK_LPAR TOK_RPAR block {$$ = make_node(NODE_FUNC, 3, $1, $2, $5);}
         ;
 
 type    : TOK_INT {$$ = make_node_special(NODE_TYPE,TYPE_INT,NULL);}
@@ -176,10 +178,12 @@ ident : TOK_IDENT { $$ = make_node_special(NODE_IDENT,0,$1); }
 %%
 
 /* A completer et/ou remplacer avec d'autres fonctions */
-
+/* Fonction de création des nodes spéciales (IDENT,TYPE,INTVAL,BOOLVAL ou STRINGVAL) */
 node_t make_node_special(node_nature nature, int valeur, char * chaine){
+    /* Création de la node classiquement poour ensuite lui rajouter ls informations la rendant spéciale */
     node_t node = make_node(nature,0);
 
+    /* Remplissage des champs correspondants au type de la node */
     switch(nature){
         case NODE_IDENT:
                 node->ident = chaine;
@@ -200,21 +204,34 @@ node_t make_node_special(node_nature nature, int valeur, char * chaine){
     return node;
 }
 
+/* Fonction de création des nodes classiques */
 node_t make_node(node_nature nature, int nops, ...) {
-    
+    /* Création des variables utiles */
     va_list ap;
     va_start(ap,nops);
     node_t node = (node_s*)malloc(sizeof(node_s));
 
+    /* Initialisation des champs de la node */
     node->nature = nature;
+    node->type = TYPE_NONE;
+
+    node->value = -1;
+    node->offset = -1;
+    node->global_decl = false;
     node->lineno = yylineno;
+    
     node->nops = nops;
     node->opr = (nops > 0) ? (node_s**)malloc(sizeof(node_s) * nops) : NULL;
     for(int i = 0;i < nops;i++){
         node->opr[i] = va_arg( ap, node_t);
     }
-
     va_end(ap);
+    node->decl_node = NULL;
+
+    node->ident = NULL;
+    node->str = NULL;
+
+    node->node_num = -1;
     return node;
 }
 

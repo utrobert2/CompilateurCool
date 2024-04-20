@@ -8,7 +8,7 @@
 #include <inttypes.h>
 #include <unistd.h>
 #include <getopt.h>
-#include<ctype.h>
+#include <ctype.h>
 
 #include "defs.h"
 #include "common.h"
@@ -20,29 +20,30 @@ extern char * outfile;
 int32_t trace_level = DEFAULT_TRACE_LEVEL;
 extern bool stop_after_syntax;
 extern bool stop_after_verif;
-extern int32_t max_regs;
 
+// Fonction de traitement des arguments de la ligne de commande du compilateur (argc = nombre d'arguments, argv = les arguments)
 void parse_args(int argc, char ** argv) {
     // Déclaration des variables activ_i (= 0 neutre, =1 activation de l'option, =-1 présence d'erreur)
     int activ_b = 0;
     int activ_t = 0;
-    int inter_t;
     int activ_r = 0;
-    int inter_r;
     int activ_s = 0;
     int activ_v = 0;
     int activ_h = 0;
     int activ_infile = 0;
     int activ_outfile = 0;
+    
+    // Déclaration des variables intermédiaire (elles garderont une valeur temporairement avant de la mettre dans les variables correspondante)
+    int inter_t;
+    int inter_r;
     char * interinfile = NULL;
     char * interoutfile = NULL;
-    FILE* file;
 
     int k = 0;
 
     // On parcoure les arguments 
     for (int i = 0;i < argc;i++){
-        // Option -h
+        // Option -h (activée si appelée ou si il n'y pas d'arguments en plus que ./nom_lambda)
         if ((strcmp(argv[i],"-h") == 0) || (argc == 1)){
             // On l'active
             activ_h = 1;
@@ -151,7 +152,7 @@ void parse_args(int argc, char ** argv) {
 
     // Si aucun fichier .c n'a été déclaré et que les options -h et -b n'ont pas été déclarées, c'est une erreur
     if (interinfile == NULL && activ_b != 1 && activ_h != 1){
-        printf("ERREUR : Déclarer un fichier\n");
+        printf("Error, missing a .c file\n");
         exit(1);
     }
 
@@ -159,10 +160,11 @@ void parse_args(int argc, char ** argv) {
     int tab_activ[8] = {activ_b,activ_h,activ_infile,activ_outfile,activ_r,activ_s,activ_t,activ_v};
     for (int i = 0;i < 8;i++){
         if (tab_activ[i] == -1){
-            printf("ERREUR\n");
+            printf("Error\n");
             exit(1);
         }
     }
+    
     // Option -b : affichage du nom du compilateur et des membres du binôme
     if (activ_b == 1){
         printf("**************************** COMPILOTRON ****************************\n");
@@ -179,32 +181,46 @@ void parse_args(int argc, char ** argv) {
         printf("• -h : Afficher la liste des options (fonction d'usage) et arrêter le parsing des arguments\n");
         exit(0);
     }
-
-
     if (activ_infile == 1) infile = interinfile;
     if (activ_outfile == 1) outfile = interoutfile;
-    // Verifier si le fichier d'entrée existe
-    file = fopen(infile,"r");
-    if (file == NULL){
-        printf("ERREUR : Fichier d'entrée inexistant\n");
-        exit(1);
-    }
-    fclose(file);
-    
-    if (activ_r == 1) max_regs = inter_r;
+    if (activ_r == 1) set_max_registers(inter_r);
     if (activ_s == 1) stop_after_syntax = true;
     if (activ_t == 1) trace_level = inter_t;
     if (activ_v == 1) stop_after_verif = true;
+
+    FILE * file = fopen(infile,"r");
+    if (file == NULL){
+        printf("Error : entry file non-existent\n");
+        exit(1);
+    }
+    fclose(file);
 }
 
 
 
 void free_nodes(node_t n) {
-    // A implementer
+    if (n == NULL) return;
     for (int i = 0;i < n->nops;i++){
         if (n->opr[i] != NULL){
             free_nodes(n->opr[i]);
+            n->opr[i] = NULL;
         }
+    }
+    if (n->opr != NULL){
+        free(n->opr);
+        n->opr = NULL;
+    }
+    if (n->decl_node != NULL){
+        //free(n->decl_node);
+        n->decl_node = NULL;
+    }
+    if (n->ident != NULL) {
+        free(n->ident);
+        n->ident = NULL;
+    }
+    if (n->str != NULL) {
+        free(n->str);
+        n->str = NULL;
     }
     free(n);
 }

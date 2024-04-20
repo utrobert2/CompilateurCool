@@ -12,6 +12,7 @@
 int yyparse(node_t * program_root);
 void analyse_tree(node_t root);
 
+
 char * infile = NULL;
 char * outfile = DEFAULT_OUTFILE;
 bool stop_after_syntax = false;
@@ -37,6 +38,7 @@ LETTRE          [a-zA-Z]
 CHIFFRE         [0-9]
 
 IDF             {LETTRE}({LETTRE}|{CHIFFRE}|_)*
+
 CHIFFRE_NON_NUL [1-9]
 ENTIER_DEC      (0|{CHIFFRE_NON_NUL})({CHIFFRE})*
 LETTRE_HEXA     [a-fA-F]
@@ -45,6 +47,7 @@ ENTIER          {ENTIER_DEC}|{ENTIER_HEXA}
 
 CHAINE_CAR      [\x20-\x21\x23-\x5B\x5D-\x7E]
 CHAINE          \"({CHAINE_CAR}|\\n)*\"
+
 COMMENTAIRE     "//".*
 
 %%
@@ -57,6 +60,7 @@ COMMENTAIRE     "//".*
 "if"            RETURN(TOK_IF);
 "do"            RETURN(TOK_DO);
 "for"           RETURN(TOK_FOR);
+"while"         RETURN(TOK_WHILE);
 
 "print"         RETURN(TOK_PRINT);
 ";"             RETURN(TOK_SEMICOL);
@@ -92,7 +96,6 @@ COMMENTAIRE     "//".*
 "!"             RETURN(TOK_NOT);
 "~"             RETURN(TOK_BNOT);
 
-
 {IDF} {
                 #if !LEX_DEBUG
                 yylval.strval = strdupl(yytext);
@@ -115,7 +118,6 @@ COMMENTAIRE     "//".*
 }
 
 {COMMENTAIRE} {
-    /* ne retourne rien car les commentaires sont ignorés */
 }
 
 
