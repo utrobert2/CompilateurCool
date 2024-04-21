@@ -31,7 +31,7 @@ void analyse_decl_globloc(node_t node,bool global,node_type typePerpetuate){
     for (int i = 0;i < node->nops;i++){
         // Vérif de si le fils i est nul
         if (node->opr[i] == NULL) continue;
-        // Récursivité avec les fils de la node (on ne met touche pas au type des NODE_IDENT dans les NODE_PRINT
+        // Récursivité avec les fils de la node (on ne touche pas au type des NODE_IDENT dans les NODE_PRINT)
         if (node->nature != NODE_PRINT) analyse_decl_globloc(node->opr[i],global,typeInter);
     }
     
@@ -218,7 +218,7 @@ void verif_context(node_t node){
         case NODE_DECL:
             if (node->opr[1] != NULL){
                 if (node->opr[0]->type != node->opr[1]->type){
-                    fprintf(stderr, "Error line %d: context error\n", node->lineno);
+                    fprintf(stderr, "Error line %d: context error, type conflict\n", node->lineno);
                     exit(1);
                 }
                 if (node->opr[0]->global_decl == false) checkup_inception(node->opr[0]->ident,node->opr[1]);
@@ -246,25 +246,25 @@ void verif_context(node_t node){
             break;
         case NODE_FUNC:
             if (strcmp(node->opr[1]->ident,"main") != 0){
-                fprintf(stderr, "Error line %d: context error\n", node->opr[1]->lineno);
+                fprintf(stderr, "Error line %d: context error, function is not main\n", node->opr[1]->lineno);
                 exit(1);
             }
             break;
         case NODE_IF:
             if (node->opr[0]->type != TYPE_BOOL){
-                fprintf(stderr, "Error line %d: context error\n", node->lineno);
+                fprintf(stderr, "Error line %d: context error\n", node->opr[0]->lineno);
                 exit(1);
             }
             break;
         case NODE_WHILE:
             if (node->opr[0]->type != TYPE_BOOL){
-                fprintf(stderr, "Error line %d: context error\n", node->lineno);
+                fprintf(stderr, "Error line %d: context error, wrong declaration of arguments in while\n", node->opr[0]->lineno);
                 exit(1);
             }
             break;
         case NODE_FOR:
             if (node->opr[0]->type != TYPE_INT || node->opr[2]->type != TYPE_INT || node->opr[1]->type != TYPE_BOOL){
-                fprintf(stderr, "Error line %d: context error\n", node->lineno);
+                fprintf(stderr, "Error line %d: context error, wrong declaration of arguments in for\n", node->opr[0]->lineno);
                 exit(1);
             }
             break;
@@ -277,7 +277,7 @@ void verif_context(node_t node){
         case NODE_UMINUS:
         case NODE_NOT:
             if (node->opr[0]->type != TYPE_INT){
-                fprintf(stderr, "Error line %d: context error\n", node->lineno);
+                fprintf(stderr, "Error line %d: context error !\n", node->lineno);
                 exit(1);
             }
             break;

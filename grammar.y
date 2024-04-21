@@ -180,7 +180,7 @@ ident : TOK_IDENT { $$ = make_node_special(NODE_IDENT,0,$1); }
 /* A completer et/ou remplacer avec d'autres fonctions */
 /* Fonction de création des nodes spéciales (IDENT,TYPE,INTVAL,BOOLVAL ou STRINGVAL) */
 node_t make_node_special(node_nature nature, int valeur, char * chaine){
-    /* Création de la node classiquement poour ensuite lui rajouter ls informations la rendant spéciale */
+    /* Création de la node classiquement oour ensuite lui rajouter les informations la rendant spéciale */
     node_t node = make_node(nature,0);
 
     /* Remplissage des champs correspondants au type de la node */

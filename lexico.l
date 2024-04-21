@@ -121,7 +121,7 @@ COMMENTAIRE     "//".*
 }
 
 
-[ \t\n]+
+[ \t\n\r]+
 
 . {
                 fprintf(stderr, "Error line %d: Lexical error\n", yylineno);
